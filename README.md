@@ -1,2 +1,4 @@
 # SOF-VSR (Super-Resolving Optical Flow for Video Super-Resolution)
-Repository for "Learning for Video Super-Resolution through HR Optical Flow Estimation", ACCV 2018
+Pytorch implementation of "Learning for Video Super-Resolution through HR Optical Flow Estimation", ACCV 2018.
+
+We will update the code after recent paper deadline.
