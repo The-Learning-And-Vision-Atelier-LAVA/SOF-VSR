@@ -39,3 +39,4 @@ You can download [Vid4]() dataset and unzip in `data` directory. Then you can te
 }
 ```
 ## Contact
+For questions, please send an email to wanglongguang15@nudt.edu.cn
