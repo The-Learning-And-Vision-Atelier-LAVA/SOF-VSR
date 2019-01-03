@@ -4,12 +4,13 @@ Pytorch implementation of "Learning for Video Super-Resolution through HR Optica
 [[arXiv]](http://arxiv.org/abs/1809.08573)
 
 ## Overview
-![overview](./Figs/overview.png)
+![overview]<div align=center>(./Figs/overview.png)
 
-Overview of our SOF-VSR network.
+<center>Overview of our SOF-VSR network.</center>
+
 ![temporal_profiles]<div align=center><img width="500" src="https://github.com/LongguangWang/SOF-VSR/blob/master/Figs/temporal_profiles.png"/></div>
 
-Comparison with the state-of-the-arts.
+<center>Comparison with the state-of-the-arts.</center>
 
 ## Requirements
 - Python 3
@@ -30,15 +31,18 @@ python demo_Vid4.py --video_name calendar --upscale_factor 4
 ```
 You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset and unzip in `data` directory. Then you can test our network on other scenes.
 ## Results
-![Vid4](./Figs/results_Vid4.png)
+![Vid4]<div align=center>(./Figs/results_Vid4.png)
 
-Comparative results achieved on the Vid4 dataset.
-![DAVIS-10](./Figs/results_DAVIS.png)
+<center>Comparative results achieved on the Vid4 dataset.</center>
 
-Comparative results achieved on the DAVIS-10 dataset.
-![temporal_profiles](./Figs/temporal_profiles.gif)
+![DAVIS-10]<div align=center>(./Figs/results_DAVIS.png)
 
-Visual comparison.
+<center>Comparative results achieved on the DAVIS-10 dataset.</center>
+
+![temporal_profiles]<div align=center>(./Figs/temporal_profiles.gif)
+
+<center>Visual comparison.</center>
+
 ## Citation
 ```
 @InProceedings{2018-LearningforVideoSuperResolutionthroughHROpticalFlowEstimation-LongguangWang--,
