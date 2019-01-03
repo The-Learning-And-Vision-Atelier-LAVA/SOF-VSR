@@ -5,8 +5,10 @@ Pytorch implementation of "Learning for Video Super-Resolution through HR Optica
 
 ## Overview
 ![overview](./Figs/overview.png)
-Over view of our SOF-VSR network.
+
+Overview of our SOF-VSR network.
 ![temporal_profiles](./Figs/temporal_profiles.png)
+
 Comparison with the state-of-the-arts.
 
 ## Requirements
@@ -17,7 +19,7 @@ Comparison with the state-of-the-arts.
 
 ## Datasets
 We use the Vid4 dataset and a subset of the DAVIS dataset (namely, DAVIS-10) for benchmark test.
-- [Vid4]()
+- [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg)
 - [DAVIS-10](https://davischallenge.org/)  
 We use 10 scenes in the DAVIS-2017 test set including boxing, demolition, dive-in, dog-control, dolphins, kart-turn, ocean-birds, pole-vault, speed-skating and wings-trun.
 
@@ -26,13 +28,16 @@ Currently, we release our code for testing. We provide the pretrained model for 
 ```bash
 python demo_Vid4.py --video_name calendar --upscale_factor 4
 ```
-You can download [Vid4]() dataset and unzip in `data` directory. Then you can test our network on other scenes.
+You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset and unzip in `data` directory. Then you can test our network on other scenes.
 ## Results
 ![Vid4](./Figs/results_Vid4.png)
+
 Comparative results achieved on the Vid4 dataset.
 ![DAVIS-10](./Figs/results_DAVIS.png)
+
 Comparative results achieved on the DAVIS-10 dataset.
 ![temporal_profiles](./Figs/temporal_profiles.gif)
+
 Visual comparison.
 ## Citation
 ```
