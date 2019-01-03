@@ -4,7 +4,7 @@ Pytorch implementation of "Learning for Video Super-Resolution through HR Optica
 [[arXiv]](http://arxiv.org/abs/1809.08573)
 
 ## Overview
-![overview]<div align=center>(./Figs/overview.png)
+![overview](./Figs/overview.png)
 
 <center>Overview of our SOF-VSR network.</center>
 
@@ -31,15 +31,15 @@ python demo_Vid4.py --video_name calendar --upscale_factor 4
 ```
 You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset and unzip in `data` directory. Then you can test our network on other scenes.
 ## Results
-![Vid4]<div align=center>(./Figs/results_Vid4.png)
+![Vid4](./Figs/results_Vid4.png)
 
 <center>Comparative results achieved on the Vid4 dataset.</center>
 
-![DAVIS-10]<div align=center>(./Figs/results_DAVIS.png)
+![DAVIS-10](./Figs/results_DAVIS.png)
 
 <center>Comparative results achieved on the DAVIS-10 dataset.</center>
 
-![temporal_profiles]<div align=center>(./Figs/temporal_profiles.gif)
+![temporal_profiles](./Figs/temporal_profiles.gif)
 
 <center>Visual comparison.</center>
 
