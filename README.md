@@ -6,11 +6,11 @@ Pytorch implementation of "Learning for Video Super-Resolution through HR Optica
 ## Overview
 ![overview](./Figs/overview.png)
 
-Overview of our SOF-VSR network.
+Figure 1. Overview of our SOF-VSR network.
 
 <div align=center><img width="500" src="https://github.com/LongguangWang/SOF-VSR/blob/master/Figs/temporal_profiles.png"/></div>
 
-Comparison with the state-of-the-arts.
+Figure 2. Comparison with the state-of-the-arts.
 
 ## Requirements
 - Python 3
@@ -33,15 +33,15 @@ You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset
 ## Results
 ![Vid4](./Figs/results_Vid4.png)
 
-Comparative results achieved on the Vid4 dataset.
+Figure 3. Comparative results achieved on the Vid4 dataset.
 
 ![DAVIS-10](./Figs/results_DAVIS.png)
 
-Comparative results achieved on the DAVIS-10 dataset.
+Figure 4. Comparative results achieved on the DAVIS-10 dataset.
 
 ![temporal_profiles](./Figs/temporal_profiles.gif)
 
-Visual comparison.
+Figure 5. Visual comparison.
 
 ## Citation
 ```
