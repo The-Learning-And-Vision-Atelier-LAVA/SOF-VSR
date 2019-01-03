@@ -33,15 +33,15 @@ You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset
 ## Results
 ![Vid4](./Figs/results_Vid4.png)
 
-Figure 3. Comparative results achieved on the Vid4 dataset.
+Figure 3. Comparative results achieved on the Vid4 dataset. Zoom-in regions from left to right: IDNnet, VSRnet, TDVSR, our SOF-VSR, DRVSR and our SOF-VSR-BD. 
 
 ![DAVIS-10](./Figs/results_DAVIS.png)
 
-Figure 4. Comparative results achieved on the DAVIS-10 dataset.
+Figure 4. Comparative results achieved on the DAVIS-10 dataset. Zoom-in regions from left to right: IDNnet, VSRnet, our SOF-VSR, DRVSR and our SOF-VSR-BD. 
 
 ![temporal_profiles](./Figs/temporal_profiles.gif)
 
-Figure 5. Visual comparison.
+Figure 5. Visual comparison of 4x SR results. From left to right: VSRnet, TDVSR, our SOF-VSR and the groundtruth.
 
 ## Citation
 ```
