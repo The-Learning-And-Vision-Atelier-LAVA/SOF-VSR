@@ -31,16 +31,11 @@ You can download [Vid4]() dataset and unzip in `data` directory. Then you can te
 
 ## Citation
 ```
-@InProceedings{tao2017spmc,
-  author    = {Xin Tao and
-               Hongyun Gao and
-               Renjie Liao and
-               Jue Wang and
-               Jiaya Jia},
-  title = {Detail-Revealing Deep Video Super-Resolution},
-  booktitle = {The IEEE International Conference on Computer Vision (ICCV)},
-  month = {Oct},
-  year = {2017}
+@InProceedings{2018-LearningforVideoSuperResolutionthroughHROpticalFlowEstimation-LongguangWang--,
+  author    = {Longguang Wang and Yulan Guo and Zaiping Lin and Xinpu Deng and Wei An},
+  title     = {Learning for Video Super-Resolution through {HR} Optical Flow Estimation},
+  booktitle = {ACCV},
+  year      = {2018},
 }
 ```
 ## Contact
