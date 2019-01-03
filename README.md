@@ -7,7 +7,7 @@ Pytorch implementation of "Learning for Video Super-Resolution through HR Optica
 ![overview](./Figs/overview.png)
 
 Overview of our SOF-VSR network.
-![temporal_profiles](./Figs/temporal_profiles.png)
+![temporal_profiles]<div align=center><img width="500" src="https://github.com/LongguangWang/SOF-VSR/blob/master/Figs/temporal_profiles.png"/></div>
 
 Comparison with the state-of-the-arts.
 
