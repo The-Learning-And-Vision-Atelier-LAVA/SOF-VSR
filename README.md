@@ -26,9 +26,17 @@ We use 10 scenes in the DAVIS-2017 test set including boxing, demolition, dive-i
 
 ## Test
 Currently, we release our code for testing. We provide the pretrained model for 4x SR. Note that we made some modifications to the original code and it should produce comparable or even better results.
+
+Run on CPU: 
 ```bash
 python demo_Vid4.py --video_name calendar --upscale_factor 4
 ```
+
+Run on GPU: 
+```bash
+python demo_Vid4.py --video_name calendar --upscale_factor 4 --gpu_mode True
+```
+
 You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset and unzip in `data` directory. Then you can test our network on other scenes.
 ## Results
 ![Vid4](./Figs/results_Vid4.png)
