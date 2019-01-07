@@ -3,16 +3,15 @@ import torch.nn as nn
 import numpy as np
 from torch.autograd import Variable
 import torch.nn.functional as F
-import torch.backends.cudnn as cudnn
 import matplotlib.pyplot as plt
 
-def optical_flow_warp(image_ref, image_optical_flow):
+def optical_flow_warp(image, image_optical_flow):
     """
     Arguments
         image_ref: reference images tensor, (b, c, h, w)
         image_optical_flow: optical flow to image_ref (b, 2, h, w)
     """
-    b, _ , h, w = image_ref.size()
+    b, _ , h, w = image.size()
     grid = np.meshgrid(range(w), range(h))
     grid = np.stack(grid, axis=-1).astype(np.float64)
     grid[:, :, 0] = grid[:, :, 0] * 2 / (w - 1) -1
@@ -28,7 +27,7 @@ def optical_flow_warp(image_ref, image_optical_flow):
     grid = grid + torch.cat((flow_0, flow_1),1)
     grid = grid.transpose(1, 2)
     grid = grid.transpose(3, 2)
-    output = F.grid_sample(image_ref, grid, padding_mode='border')
+    output = F.grid_sample(image, grid, padding_mode='border')
     return output
 
 
@@ -67,26 +66,26 @@ class OFRnet(nn.Module):
         self.final_upsample = nn.Upsample(scale_factor = upscale_factor, mode='bilinear')
         self.shuffle = nn.PixelShuffle(upscale_factor)
         self.upscale_factor = upscale_factor
-        #Level 1
+        #Part 1
         self.conv_L1_1 = nn.Conv2d(2, 32, 3, 1, 1, bias=False)
         self.RDB1_1 = RDB(4, 32, 32)
         self.RDB1_2 = RDB(4, 32, 32)
         self.bottleneck_L1 = nn.Conv2d(64, 2, 3, 1, 1, bias=False)
         self.conv_L1_2 = nn.Conv2d(2, 2, 3, 1, 1, bias=True)
-        #Level 2
+        #Part 2
         self.conv_L2_1 = nn.Conv2d(6, 32, 3, 1, 1, bias=False)
         self.RDB2_1 = RDB(4, 32, 32)
         self.RDB2_2 = RDB(4, 32, 32)
         self.bottleneck_L2 = nn.Conv2d(64, 2, 3, 1, 1, bias=False)
         self.conv_L2_2 = nn.Conv2d(2, 2, 3, 1, 1, bias=True)
-        #Level 3
+        #Part 3
         self.conv_L3_1 = nn.Conv2d(6, 32, 3, 1, 1, bias=False)
         self.RDB3_1 = RDB(4, 32, 32)
         self.RDB3_2 = RDB(4, 32, 32)
         self.bottleneck_L3 = nn.Conv2d(64, 2*upscale_factor**2, 3, 1, 1, bias=False)
         self.conv_L3_2 = nn.Conv2d(2*upscale_factor**2, 2*upscale_factor**2, 3, 1, 1, bias=True)
     def forward(self, x):
-        #Level 1
+        #Part 1
         x_L1 = self.pool(x)
         _, _, h, w = x_L1.size()
         input_L1 = self.conv_L1_1(x_L1)
@@ -97,7 +96,7 @@ class OFRnet(nn.Module):
         optical_flow_L1 = self.conv_L1_2(optical_flow_L1)
         optical_flow_L1_upscaled = self.upsample(optical_flow_L1) # *2
         x_L1_res = optical_flow_warp(torch.unsqueeze(x_L1[:, 0, :, :], dim=1), optical_flow_L1) - torch.unsqueeze(x_L1[:, 1, :, :], dim=1)
-        #Level 2
+        #Part 2
         x_L2 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), optical_flow_L1_upscaled)
         x_L2_res = torch.unsqueeze(x[:, 1, :, :], dim=1) - x_L2
         x_L2 = torch.cat((x, x_L2, x_L2_res,optical_flow_L1_upscaled), 1)
@@ -109,7 +108,7 @@ class OFRnet(nn.Module):
         optical_flow_L2 = self.conv_L2_2(optical_flow_L2)
         optical_flow_L2 = optical_flow_L2 + optical_flow_L1_upscaled
         x_L2_res = optical_flow_warp(torch.unsqueeze(x_L2[:, 0, :, :], dim=1), optical_flow_L2) - torch.unsqueeze(x_L2[:, 2, :, :], dim=1)
-        #Level 3
+        #Part 3
         x_L3 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), optical_flow_L2)
         x_L3_res = torch.unsqueeze(x[:, 1, :, :], dim=1) - x_L3
         x_L3 = torch.cat((x, x_L3, x_L3_res, optical_flow_L2), 1)

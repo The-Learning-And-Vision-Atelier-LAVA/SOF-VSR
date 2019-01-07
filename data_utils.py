@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 import os
-from torchvision import transforms
+import torch
 from torch.utils.data.dataset import Dataset
 
 
@@ -34,12 +34,17 @@ class TestsetLoader(Dataset):
         LR2_y = LR2_y[:, :, np.newaxis]
         LR = np.concatenate((LR0_y, LR1_y, LR2_y), axis=2)
 
-        LR = transforms.ToTensor()(LR)
+        LR = toTensor(LR)
 
         _, SR_cb, SR_cr = rgb2ycbcr(LR1_bicubic)
         return LR, SR_cb, SR_cr
     def __len__(self):
         return self.frame_list.__len__() - 2
+
+def toTensor(img):
+    img = torch.from_numpy(img.transpose((2, 0, 1)))
+    img.float().div(255)
+    return img
 
 def rgb2ycbcr(img_rgb):
     ## the range of img_rgb should be (0, 1)
