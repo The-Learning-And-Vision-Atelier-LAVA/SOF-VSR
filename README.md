@@ -25,7 +25,7 @@ We use the Vid4 dataset and a subset of the DAVIS dataset (namely, DAVIS-10) for
 We use 10 scenes in the DAVIS-2017 test set including boxing, demolition, dive-in, dog-control, dolphins, kart-turn, ocean-birds, pole-vault, speed-skating and wings-trun.
 
 ## Test
-Currently, we release our code for testing. We provide the pretrained model for 4x SR. Note that we made some modifications to the original code and it should produce comparable or even better results.
+Currently, we release our code for testing. We provide the pretrained model for 4x SR on BI degradation model. Note that we made some modifications to the original code and it should produce comparable or even better results.
 
 - Run on CPU:
 ```bash
