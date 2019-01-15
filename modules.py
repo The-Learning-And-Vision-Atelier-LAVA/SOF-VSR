@@ -66,26 +66,26 @@ class OFRnet(nn.Module):
         self.final_upsample = nn.Upsample(scale_factor = upscale_factor, mode='bilinear')
         self.shuffle = nn.PixelShuffle(upscale_factor)
         self.upscale_factor = upscale_factor
-        #Part 1
+        #Level 1
         self.conv_L1_1 = nn.Conv2d(2, 32, 3, 1, 1, bias=False)
         self.RDB1_1 = RDB(4, 32, 32)
         self.RDB1_2 = RDB(4, 32, 32)
         self.bottleneck_L1 = nn.Conv2d(64, 2, 3, 1, 1, bias=False)
         self.conv_L1_2 = nn.Conv2d(2, 2, 3, 1, 1, bias=True)
-        #Part 2
+        #Level 2
         self.conv_L2_1 = nn.Conv2d(6, 32, 3, 1, 1, bias=False)
         self.RDB2_1 = RDB(4, 32, 32)
         self.RDB2_2 = RDB(4, 32, 32)
         self.bottleneck_L2 = nn.Conv2d(64, 2, 3, 1, 1, bias=False)
         self.conv_L2_2 = nn.Conv2d(2, 2, 3, 1, 1, bias=True)
-        #Part 3
+        #Level 3
         self.conv_L3_1 = nn.Conv2d(6, 32, 3, 1, 1, bias=False)
         self.RDB3_1 = RDB(4, 32, 32)
         self.RDB3_2 = RDB(4, 32, 32)
         self.bottleneck_L3 = nn.Conv2d(64, 2*upscale_factor**2, 3, 1, 1, bias=False)
         self.conv_L3_2 = nn.Conv2d(2*upscale_factor**2, 2*upscale_factor**2, 3, 1, 1, bias=True)
     def forward(self, x):
-        #Part 1
+        #Level 1
         x_L1 = self.pool(x)
         _, _, h, w = x_L1.size()
         input_L1 = self.conv_L1_1(x_L1)
@@ -96,7 +96,7 @@ class OFRnet(nn.Module):
         optical_flow_L1 = self.conv_L1_2(optical_flow_L1)
         optical_flow_L1_upscaled = self.upsample(optical_flow_L1) # *2
         x_L1_res = optical_flow_warp(torch.unsqueeze(x_L1[:, 0, :, :], dim=1), optical_flow_L1) - torch.unsqueeze(x_L1[:, 1, :, :], dim=1)
-        #Part 2
+        #Level 2
         x_L2 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), optical_flow_L1_upscaled)
         x_L2_res = torch.unsqueeze(x[:, 1, :, :], dim=1) - x_L2
         x_L2 = torch.cat((x, x_L2, x_L2_res,optical_flow_L1_upscaled), 1)
@@ -108,7 +108,7 @@ class OFRnet(nn.Module):
         optical_flow_L2 = self.conv_L2_2(optical_flow_L2)
         optical_flow_L2 = optical_flow_L2 + optical_flow_L1_upscaled
         x_L2_res = optical_flow_warp(torch.unsqueeze(x_L2[:, 0, :, :], dim=1), optical_flow_L2) - torch.unsqueeze(x_L2[:, 2, :, :], dim=1)
-        #Part 3
+        #Level 3
         x_L3 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), optical_flow_L2)
         x_L3_res = torch.unsqueeze(x[:, 1, :, :], dim=1) - x_L3
         x_L3 = torch.cat((x, x_L3, x_L3_res, optical_flow_L2), 1)
