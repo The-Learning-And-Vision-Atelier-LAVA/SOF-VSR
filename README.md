@@ -37,19 +37,24 @@ python demo_Vid4.py --video_name calendar --upscale_factor 4
 python demo_Vid4.py --video_name calendar --upscale_factor 4 --gpu_mode True
 ```
 
+- Run on GPU (memory efficient):
+```bash
+python demo_Vid4.py --video_name calendar --upscale_factor 4 --gpu_mode True --chop_forward True
+```
+
 You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset and unzip in `data` directory. Then you can test our network on other scenes.
 ## Results
 ![Vid4](./Figs/results_Vid4.png)
 
-Figure 3. Comparative results achieved on the Vid4 dataset. Zoom-in regions from left to right: IDNnet, VSRnet, TDVSR, our SOF-VSR, DRVSR and our SOF-VSR-BD. 
+Figure 3. Comparative results achieved on the Vid4 dataset. Zoom-in regions from left to right: *IDNnet*, *VSRnet*, *TDVSR*, our *SOF-VSR*, *DRVSR* and our *SOF-VSR-BD*. 
 
 ![DAVIS-10](./Figs/results_DAVIS.png)
 
-Figure 4. Comparative results achieved on the DAVIS-10 dataset. Zoom-in regions from left to right: IDNnet, VSRnet, our SOF-VSR, DRVSR and our SOF-VSR-BD. 
+Figure 4. Comparative results achieved on the DAVIS-10 dataset. Zoom-in regions from left to right: *IDNnet*, *VSRnet*, our *SOF-VSR*, *DRVSR* and our *SOF-VSR-BD*. 
 
 ![temporal_profiles](./Figs/temporal_profiles.gif)
 
-Figure 5. Visual comparison of 4x SR results. From left to right: VSRnet, TDVSR, our SOF-VSR and the groundtruth.
+Figure 5. Visual comparison of 4x SR results. From left to right: *VSRnet*, *TDVSR*, our *SOF-VSR* and the *groundtruth*.
 
 ## Citation
 ```
