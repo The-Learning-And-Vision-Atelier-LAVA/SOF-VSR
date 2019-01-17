@@ -157,11 +157,11 @@ class SOFVSR(nn.Module):
         input_21 = torch.cat((torch.unsqueeze(x[:, 2, :, :], dim=1), torch.unsqueeze(x[:, 1, :, :], dim=1)), 1)
         flow_01_L3 = self.OFRnet(input_01)
         flow_21_L3 = self.OFRnet(input_21)
-        warped = x
+        draft_cube = x
         for i in range(self.upscale_factor):
             for j in range(self.upscale_factor):
-                warped_1 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), flow_01_L3[:, :, i::self.upscale_factor, j::self.upscale_factor]/self.upscale_factor)
-                warped_2 = optical_flow_warp(torch.unsqueeze(x[:, 2, :, :], dim=1), flow_21_L3[:, :, i::self.upscale_factor, j::self.upscale_factor]/self.upscale_factor)
-                warped = torch.cat((warped, warped_1, warped_2),1)
-        output = self.SRnet(warped)
+                draft_01 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), flow_01_L3[:, :, i::self.upscale_factor, j::self.upscale_factor]/self.upscale_factor)
+                draft_21 = optical_flow_warp(torch.unsqueeze(x[:, 2, :, :], dim=1), flow_21_L3[:, :, i::self.upscale_factor, j::self.upscale_factor]/self.upscale_factor)
+                draft_cube = torch.cat((draft_cube, draft_01, draft_21),1)
+        output = self.SRnet(draft_cube)
         return torch.squeeze(output)
