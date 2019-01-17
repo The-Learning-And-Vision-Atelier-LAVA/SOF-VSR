@@ -95,7 +95,7 @@ class OFRnet(nn.Module):
         optical_flow_L1 = self.bottleneck_L1(buffer)
         optical_flow_L1 = self.conv_L1_2(optical_flow_L1)
         optical_flow_L1_upscaled = self.upsample(optical_flow_L1) # *2
-        x_L1_res = optical_flow_warp(torch.unsqueeze(x_L1[:, 0, :, :], dim=1), optical_flow_L1) - torch.unsqueeze(x_L1[:, 1, :, :], dim=1)
+        # x_L1_res = optical_flow_warp(torch.unsqueeze(x_L1[:, 0, :, :], dim=1), optical_flow_L1) - torch.unsqueeze(x_L1[:, 1, :, :], dim=1)
         #Level 2
         x_L2 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), optical_flow_L1_upscaled)
         x_L2_res = torch.unsqueeze(x[:, 1, :, :], dim=1) - x_L2
@@ -107,7 +107,7 @@ class OFRnet(nn.Module):
         optical_flow_L2 = self.bottleneck_L2(buffer)
         optical_flow_L2 = self.conv_L2_2(optical_flow_L2)
         optical_flow_L2 = optical_flow_L2 + optical_flow_L1_upscaled
-        x_L2_res = optical_flow_warp(torch.unsqueeze(x_L2[:, 0, :, :], dim=1), optical_flow_L2) - torch.unsqueeze(x_L2[:, 2, :, :], dim=1)
+        # x_L2_res = optical_flow_warp(torch.unsqueeze(x_L2[:, 0, :, :], dim=1), optical_flow_L2) - torch.unsqueeze(x_L2[:, 1, :, :], dim=1)
         #Level 3
         x_L3 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), optical_flow_L2)
         x_L3_res = torch.unsqueeze(x[:, 1, :, :], dim=1) - x_L3
@@ -119,7 +119,7 @@ class OFRnet(nn.Module):
         optical_flow_L3 = self.bottleneck_L3(buffer)
         optical_flow_L3 = self.conv_L3_2(optical_flow_L3)
         optical_flow_L3 = self.shuffle(optical_flow_L3) + self.final_upsample(optical_flow_L2) # *4
-        return x_L1_res, x_L2_res, optical_flow_L1, optical_flow_L2, optical_flow_L3
+        return optical_flow_L3
 
 class SRnet(nn.Module):
     def __init__(self, upscale_factor):
@@ -155,8 +155,8 @@ class SOFVSR(nn.Module):
     def forward(self, x):
         input_01 = torch.cat((torch.unsqueeze(x[:, 0, :, :], dim=1), torch.unsqueeze(x[:, 1, :, :], dim=1)), 1)
         input_21 = torch.cat((torch.unsqueeze(x[:, 2, :, :], dim=1), torch.unsqueeze(x[:, 1, :, :], dim=1)), 1)
-        res_01_L1, res_01_L2, flow_01_L1, flow_01_L2, flow_01_L3 = self.OFRnet(input_01)
-        res_21_L1, res_21_L2, flow_21_L1, flow_21_L2, flow_21_L3 = self.OFRnet(input_21)
+        flow_01_L3 = self.OFRnet(input_01)
+        flow_21_L3 = self.OFRnet(input_21)
         warped = x
         for i in range(self.upscale_factor):
             for j in range(self.upscale_factor):
