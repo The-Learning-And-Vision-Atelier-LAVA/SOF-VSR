@@ -56,7 +56,7 @@ def main(cfg):
     upscale_factor = cfg.upscale_factor
     use_gpu = cfg.gpu_mode
 
-    test_set = TestsetLoader('data/'+ video_name, upscale_factor)
+    test_set = TestsetLoader('data/test/'+ video_name, upscale_factor)
     test_loader = DataLoader(test_set, num_workers=1, batch_size=1, shuffle=False)
     net = SOFVSR(upscale_factor=upscale_factor)
     ckpt = torch.load('./log/SOFVSR_x' + str(upscale_factor) + '.pth')

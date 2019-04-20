@@ -59,33 +59,34 @@ class RDB(nn.Module):
         return out
 
 class OFRnet(nn.Module):
-    def __init__(self, upscale_factor):
+    def __init__(self, upscale_factor, is_training):
         super(OFRnet, self).__init__()
         self.pool = nn.AvgPool2d(kernel_size = 2)
         self.upsample = nn.Upsample(scale_factor = 2, mode = 'bilinear')
         self.final_upsample = nn.Upsample(scale_factor = upscale_factor, mode='bilinear')
         self.shuffle = nn.PixelShuffle(upscale_factor)
         self.upscale_factor = upscale_factor
-        #Level 1
+        self.is_training = is_training
+        # Level 1
         self.conv_L1_1 = nn.Conv2d(2, 32, 3, 1, 1, bias=False)
         self.RDB1_1 = RDB(4, 32, 32)
         self.RDB1_2 = RDB(4, 32, 32)
         self.bottleneck_L1 = nn.Conv2d(64, 2, 3, 1, 1, bias=False)
         self.conv_L1_2 = nn.Conv2d(2, 2, 3, 1, 1, bias=True)
-        #Level 2
+        # Level 2
         self.conv_L2_1 = nn.Conv2d(6, 32, 3, 1, 1, bias=False)
         self.RDB2_1 = RDB(4, 32, 32)
         self.RDB2_2 = RDB(4, 32, 32)
         self.bottleneck_L2 = nn.Conv2d(64, 2, 3, 1, 1, bias=False)
         self.conv_L2_2 = nn.Conv2d(2, 2, 3, 1, 1, bias=True)
-        #Level 3
+        # Level 3
         self.conv_L3_1 = nn.Conv2d(6, 32, 3, 1, 1, bias=False)
         self.RDB3_1 = RDB(4, 32, 32)
         self.RDB3_2 = RDB(4, 32, 32)
         self.bottleneck_L3 = nn.Conv2d(64, 2*upscale_factor**2, 3, 1, 1, bias=False)
         self.conv_L3_2 = nn.Conv2d(2*upscale_factor**2, 2*upscale_factor**2, 3, 1, 1, bias=True)
     def forward(self, x):
-        #Level 1
+        # Level 1
         x_L1 = self.pool(x)
         _, _, h, w = x_L1.size()
         input_L1 = self.conv_L1_1(x_L1)
@@ -95,8 +96,9 @@ class OFRnet(nn.Module):
         optical_flow_L1 = self.bottleneck_L1(buffer)
         optical_flow_L1 = self.conv_L1_2(optical_flow_L1)
         optical_flow_L1_upscaled = self.upsample(optical_flow_L1) # *2
-        # x_L1_res = optical_flow_warp(torch.unsqueeze(x_L1[:, 0, :, :], dim=1), optical_flow_L1) - torch.unsqueeze(x_L1[:, 1, :, :], dim=1)
-        #Level 2
+        if self.is_training is True:
+            x_L1_res = optical_flow_warp(torch.unsqueeze(x_L1[:, 0, :, :], dim=1), optical_flow_L1) - torch.unsqueeze(x_L1[:, 1, :, :], dim=1)
+        # Level 2
         x_L2 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), optical_flow_L1_upscaled)
         x_L2_res = torch.unsqueeze(x[:, 1, :, :], dim=1) - x_L2
         x_L2 = torch.cat((x, x_L2, x_L2_res,optical_flow_L1_upscaled), 1)
@@ -107,8 +109,9 @@ class OFRnet(nn.Module):
         optical_flow_L2 = self.bottleneck_L2(buffer)
         optical_flow_L2 = self.conv_L2_2(optical_flow_L2)
         optical_flow_L2 = optical_flow_L2 + optical_flow_L1_upscaled
-        # x_L2_res = optical_flow_warp(torch.unsqueeze(x_L2[:, 0, :, :], dim=1), optical_flow_L2) - torch.unsqueeze(x_L2[:, 1, :, :], dim=1)
-        #Level 3
+        if self.is_training is True:
+            x_L2_res = optical_flow_warp(torch.unsqueeze(x_L2[:, 0, :, :], dim=1), optical_flow_L2) - torch.unsqueeze(x_L2[:, 1, :, :], dim=1)
+        # Level 3
         x_L3 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], dim=1), optical_flow_L2)
         x_L3_res = torch.unsqueeze(x[:, 1, :, :], dim=1) - x_L3
         x_L3 = torch.cat((x, x_L3, x_L3_res, optical_flow_L2), 1)
@@ -119,10 +122,13 @@ class OFRnet(nn.Module):
         optical_flow_L3 = self.bottleneck_L3(buffer)
         optical_flow_L3 = self.conv_L3_2(optical_flow_L3)
         optical_flow_L3 = self.shuffle(optical_flow_L3) + self.final_upsample(optical_flow_L2) # *4
-        return optical_flow_L3
+        if self.is_training is False:
+            return optical_flow_L3
+        if self.is_training is True:
+            return x_L1_res, x_L2_res, optical_flow_L1, optical_flow_L2, optical_flow_L3
 
 class SRnet(nn.Module):
-    def __init__(self, upscale_factor):
+    def __init__(self, upscale_factor, is_training):
         super(SRnet, self).__init__()
         self.conv = nn.Conv2d(35, 64, 3, 1, 1, bias=False)
         self.RDB_1 = RDB(5, 64, 32)
@@ -133,6 +139,7 @@ class SRnet(nn.Module):
         self.bottleneck = nn.Conv2d(384, upscale_factor ** 2, 1, 1, 0, bias=False)
         self.conv_2 = nn.Conv2d(upscale_factor ** 2, upscale_factor ** 2, 3, 1, 1, bias=True)
         self.shuffle = nn.PixelShuffle(upscale_factor=upscale_factor)
+        self.is_training = is_training
     def forward(self, x):
         input = self.conv(x)
         buffer_1 = self.RDB_1(input)
@@ -147,16 +154,21 @@ class SRnet(nn.Module):
         return output
 
 class SOFVSR(nn.Module):
-    def __init__(self, upscale_factor):
+    def __init__(self, upscale_factor, is_training=False):
         super(SOFVSR, self).__init__()
         self.upscale_factor = upscale_factor
-        self.OFRnet = OFRnet(upscale_factor=upscale_factor)
-        self.SRnet = SRnet(upscale_factor=upscale_factor)
+        self.is_training = is_training
+        self.OFRnet = OFRnet(upscale_factor=upscale_factor, is_training=is_training)
+        self.SRnet = SRnet(upscale_factor=upscale_factor, is_training=is_training)
     def forward(self, x):
         input_01 = torch.cat((torch.unsqueeze(x[:, 0, :, :], dim=1), torch.unsqueeze(x[:, 1, :, :], dim=1)), 1)
         input_21 = torch.cat((torch.unsqueeze(x[:, 2, :, :], dim=1), torch.unsqueeze(x[:, 1, :, :], dim=1)), 1)
-        flow_01_L3 = self.OFRnet(input_01)
-        flow_21_L3 = self.OFRnet(input_21)
+        if self.is_training is False:
+            flow_01_L3 = self.OFRnet(input_01)
+            flow_21_L3 = self.OFRnet(input_21)
+        if self.is_training is True:
+            res_01_L1, res_01_L2, flow_01_L1, flow_01_L2, flow_01_L3 = self.OFRnet(input_01)
+            res_21_L1, res_21_L2, flow_21_L1, flow_21_L2, flow_21_L3 = self.OFRnet(input_21)
         draft_cube = x
         for i in range(self.upscale_factor):
             for j in range(self.upscale_factor):
@@ -164,4 +176,8 @@ class SOFVSR(nn.Module):
                 draft_21 = optical_flow_warp(torch.unsqueeze(x[:, 2, :, :], dim=1), flow_21_L3[:, :, i::self.upscale_factor, j::self.upscale_factor]/self.upscale_factor)
                 draft_cube = torch.cat((draft_cube, draft_01, draft_21),1)
         output = self.SRnet(draft_cube)
-        return torch.squeeze(output)
+        if self.is_training is False:
+            return torch.squeeze(output)
+        if self.is_training is True:
+            return (res_01_L1, res_01_L2, flow_01_L1, flow_01_L2, flow_01_L3), \
+                    (res_21_L1, res_21_L2, flow_21_L1, flow_21_L2, flow_21_L3), output

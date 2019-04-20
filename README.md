@@ -19,13 +19,43 @@ Figure 2. Comparison with the state-of-the-arts.
 - Matlab (For PSNR/SSIM evaluation)
 
 ## Datasets
+We collect 145 1080P video clips from the CDVL Database(www.cdvl.org) for training.
+
 We use the Vid4 dataset and a subset of the DAVIS dataset (namely, DAVIS-10) for benchmark test.
 - Vid4([BaiduPan](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg), [GoogleDrive](https://drive.google.com/file/d/1ayb41qjur19Qq04kQewMHE5U2t-Sbwdw/view?usp=sharing))
 - [DAVIS-10](https://davischallenge.org/)  
 We use 10 scenes in the DAVIS-2017 test set including boxing, demolition, dive-in, dog-control, dolphins, kart-turn, ocean-birds, pole-vault, speed-skating and wings-trun.
 
+## Train
+Prepare training data in `data/train` directory as below:
+```
+  data
+  └── train
+      ├── video_1
+            ├── hr
+                    ├── hr0.png
+                    ├── ...
+                    └── hr30.png
+            └── lr_x4_BI
+                    ├── lr0.png
+                    ├── ...
+                    └── lr30.png
+      ├── ...
+      └── video_N
+```
+
+- Run on CPU:
+```bash
+python train.py --upscale_factor 4 --patch_size 32 --batch_size 16 --n_iters 300000
+```
+
+- Run on GPU:
+```bash
+python train.py --upscale_factor 4 --patch_size 32 --batch_size 16 --n_iters --gpu_mode True
+```
+
 ## Test
-Currently, we release our code for testing. We provide the pretrained model for 4x SR on BI degradation model. Note that we made some modifications to the original code and it should produce comparable or even better results.
+We provide the pretrained model for 4x SR on BI degradation model. Note that we made some modifications to the original code and it should produce comparable or even better results.
 
 - Run on CPU:
 ```bash
@@ -42,7 +72,7 @@ python demo_Vid4.py --video_name calendar --upscale_factor 4 --gpu_mode True
 python demo_Vid4.py --video_name calendar --upscale_factor 4 --gpu_mode True --chop_forward True
 ```
 
-You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset and unzip in `data` directory. Then you can test our network on other scenes.
+You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset and unzip in `data/test` directory. Then you can test our network on other scenes.
 ## Results
 ![Vid4](./Figs/results_Vid4.png)
 
