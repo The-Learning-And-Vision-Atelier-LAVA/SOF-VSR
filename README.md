@@ -51,7 +51,7 @@ python train.py --upscale_factor 4 --patch_size 32 --batch_size 16 --n_iters 300
 
 - Run on GPU:
 ```bash
-python train.py --upscale_factor 4 --patch_size 32 --batch_size 16 --n_iters --gpu_mode True
+python train.py --upscale_factor 4 --patch_size 32 --batch_size 16 --n_iters 300000 --gpu_mode True
 ```
 
 ## Test
