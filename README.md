@@ -19,7 +19,7 @@ Figure 2. Comparison with the state-of-the-arts.
 - Matlab (For PSNR/SSIM evaluation)
 
 ## Datasets
-We collect 145 1080P video clips from the CDVL Database(www.cdvl.org) for training.
+We collect 145 1080P video clips from [the CDVL Database](www.cdvl.org) for training.
 
 We use the Vid4 dataset and a subset of the DAVIS dataset (namely, DAVIS-10) for benchmark test.
 - Vid4([BaiduPan](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg), [GoogleDrive](https://drive.google.com/file/d/1ayb41qjur19Qq04kQewMHE5U2t-Sbwdw/view?usp=sharing))
