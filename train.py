@@ -27,7 +27,7 @@ def main(cfg):
         net.cuda()
     cudnn.benchmark = True
 
-    train_set = TrainsetLoader(cfg.trainset_dir, cfg.upscale_factor, cfg.patch_size, cfg.n_iters)
+    train_set = TrainsetLoader(cfg.trainset_dir, cfg.upscale_factor, cfg.patch_size, cfg.n_iters*cfg.batch_size)
     train_loader = DataLoader(train_set, num_workers=4, batch_size=cfg.batch_size, shuffle=True)
 
     # train
