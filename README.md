@@ -1,7 +1,9 @@
 # SOF-VSR (Super-resolving Optical Flow for Video Super-Resolution)
-Pytorch implementation of "Learning for Video Super-Resolution through HR Optical Flow Estimation", ACCV 2018.
+Pytorch implementation of our ACCV 2018 paper *"Learning for Video Super-Resolution through HR Optical Flow Estimation"* and TIP 2020 paper *"Deep Video Super-Resolution using {HR} Optical Flow Estimation"*.
 
-[[arXiv]](http://arxiv.org/abs/1809.08573)
+[[ACCV]](http://arxiv.org/abs/1809.08573) [TIP]
+
+*Codes for TIP version will be updated soon.*
 
 ## Overview
 ![overview](./Figs/overview.png)
@@ -88,11 +90,17 @@ Figure 5. Visual comparison of 4x SR results. From left to right: **VSRnet**, **
 
 ## Citation
 ```
-@InProceedings{2018-LearningforVideoSuperResolutionthroughHROpticalFlowEstimation-LongguangWang--,
+@InProceedings{Wang2018accv,
   author    = {Longguang Wang and Yulan Guo and Zaiping Lin and Xinpu Deng and Wei An},
   title     = {Learning for Video Super-Resolution through {HR} Optical Flow Estimation},
   booktitle = {ACCV},
   year      = {2018},
+}
+@Article{Wang2020tip,
+  author    = {Longguang Wang and Yulan Guo and Li Liu and Zaiping Lin and Xinpu Deng and Wei An},
+  title     = {Deep Video Super-Resolution using {HR} Optical Flow Estimation},
+  journal   = {{IEEE} Transactions on Image Processing},
+  year      = {2020},
 }
 ```
 ## Contact
