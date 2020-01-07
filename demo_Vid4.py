@@ -79,6 +79,7 @@ def main(cfg):
                 SR_y = chop_forward(LR_y_cube, net, cfg.upscale_factor)
             else:
                 SR_y = net(LR_y_cube)
+	    SR_y = SR_y.cpu()
         else:
             SR_y = net(LR_y_cube)
 
