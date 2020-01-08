@@ -1,7 +1,8 @@
 # SOF-VSR (Super-resolving Optical Flow for Video Super-Resolution)
-Pytorch implementation of "Learning for Video Super-Resolution through HR Optical Flow Estimation", ACCV 2018.
+Pytorch implementation of our ACCV 2018 paper ***"Learning for Video Super-Resolution through HR Optical Flow Estimation"*** and TIP 2020 paper ***"Deep Video Super-Resolution using HR Optical Flow Estimation"****.
 
-[[arXiv]](http://arxiv.org/abs/1809.08573)
+[[ACCV]](http://arxiv.org/abs/1809.08573) [[TIP]](http://arxiv.org/abs/2001.02129)
+
 
 ## Overview
 ![overview](./Figs/overview.png)
@@ -26,53 +27,10 @@ We use the Vid4 dataset and a subset of the DAVIS dataset (namely, DAVIS-10) for
 - [DAVIS-10](https://davischallenge.org/)  
 We use 10 scenes in the DAVIS-2017 test set including boxing, demolition, dive-in, dog-control, dolphins, kart-turn, ocean-birds, pole-vault, speed-skating and wings-trun.
 
-## Train
-Prepare training data in `data/train` directory as below:
-```
-  data
-  └── train
-      ├── video_1
-            ├── hr
-                    ├── hr0.png
-                    ├── ...
-                    └── hr30.png
-            └── lr_x4_BI
-                    ├── lr0.png
-                    ├── ...
-                    └── lr30.png
-      ├── ...
-      └── video_N
-```
+## Train & Test
+[ACCV](./ACCV/README.md)
+[TIP](./TIP/README.md)
 
-- Run on CPU:
-```bash
-python train.py --upscale_factor 4 --patch_size 32 --batch_size 16 --n_iters 300000
-```
-
-- Run on GPU:
-```bash
-python train.py --upscale_factor 4 --patch_size 32 --batch_size 16 --n_iters 300000 --gpu_mode True
-```
-
-## Test
-We provide the pretrained model for 4x SR on BI degradation model. Note that we made some modifications to the original code and it should produce comparable or even better results.
-
-- Run on CPU:
-```bash
-python demo_Vid4.py --video_name calendar --upscale_factor 4
-```
-
-- Run on GPU:
-```bash
-python demo_Vid4.py --video_name calendar --upscale_factor 4 --gpu_mode True
-```
-
-- Run on GPU (memory efficient):
-```bash
-python demo_Vid4.py --video_name calendar --upscale_factor 4 --gpu_mode True --chop_forward True
-```
-
-You can download [Vid4](https://pan.baidu.com/s/1q947P3mvPaOjTZ5f1kXoTg) dataset and unzip in `data/test` directory. Then you can test our network on other scenes.
 ## Results
 ![Vid4](./Figs/results_Vid4.png)
 
@@ -88,11 +46,17 @@ Figure 5. Visual comparison of 4x SR results. From left to right: **VSRnet**, **
 
 ## Citation
 ```
-@InProceedings{2018-LearningforVideoSuperResolutionthroughHROpticalFlowEstimation-LongguangWang--,
+@InProceedings{Wang2018accv,
   author    = {Longguang Wang and Yulan Guo and Zaiping Lin and Xinpu Deng and Wei An},
   title     = {Learning for Video Super-Resolution through {HR} Optical Flow Estimation},
   booktitle = {ACCV},
   year      = {2018},
+}
+@Article{Wang2020tip,
+  author    = {Longguang Wang and Yulan Guo and Li Liu and Zaiping Lin and Xinpu Deng and Wei An},
+  title     = {Deep Video Super-Resolution using {HR} Optical Flow Estimation},
+  journal   = {{IEEE} Transactions on Image Processing},
+  year      = {2020},
 }
 ```
 ## Contact

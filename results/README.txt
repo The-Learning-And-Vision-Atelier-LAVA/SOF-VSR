@@ -1,1 +1,0 @@
-Results are generated in this directory.
