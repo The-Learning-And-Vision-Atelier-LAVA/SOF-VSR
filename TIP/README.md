@@ -44,7 +44,7 @@ We provide the pretrained models (2x/3x/4x SR on BI degradation model and 4x SR 
 	- Run on GPU (memory efficient):
 	```bash
 	python demo_Vid4.py --degradation BI --scale 4 --gpu_mode True --chop_forward True
-```
+	```
 
 - Evaluation (Matlab)
 
