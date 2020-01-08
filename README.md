@@ -4,12 +4,6 @@ Pytorch implementation of our ACCV 2018 paper ***"Learning for Video Super-Resol
 
 [[ACCV]](http://arxiv.org/abs/1809.08573) [[TIP]](http://arxiv.org/abs/2001.02129)
 
-=======
-
-[[ACCV]](http://arxiv.org/abs/1809.08573) [TIP]
-
-*Codes for TIP version will be updated soon.*
->>>>>>> ddb7805634d72cfd6ff232c16485157285bdb362
 
 ## Overview
 ![overview](./Figs/overview.png)
@@ -36,6 +30,7 @@ We use 10 scenes in the DAVIS-2017 test set including boxing, demolition, dive-i
 
 ## Train & Test
 [ACCV](./ACCV/README.md)
+
 [TIP](./TIP/README.md)
 
 ## Results
