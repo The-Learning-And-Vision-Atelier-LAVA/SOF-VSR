@@ -30,20 +30,22 @@ python train.py --scale 4 --patch_size 32 --batch_size 32 --n_iters 200000 --gpu
 We provide the pretrained models (2x/3x/4x SR on BI degradation model and 4x SR on BD degradation model) for evaluation on the Vid4 dataset. 
 
 - Inference
--- Run on CPU:
-```bash
-python demo_Vid4.py --degradation BI --scale 4
-```
 
--- Run on GPU:
-```bash
-python demo_Vid4.py --degradation BI --scale 4 --gpu_mode True
-```
+	- Run on CPU:
+	```bash
+	python demo_Vid4.py --degradation BI --scale 4
+	```
 
--- Run on GPU (memory efficient):
-```bash
-python demo_Vid4.py --degradation BI --scale 4 --gpu_mode True --chop_forward True
+	- Run on GPU:
+	```bash
+	python demo_Vid4.py --degradation BI --scale 4 --gpu_mode True
+	```
+
+	- Run on GPU (memory efficient):
+	```bash
+	python demo_Vid4.py --degradation BI --scale 4 --gpu_mode True --chop_forward True
 ```
 
 - Evaluation (Matlab)
--- Run evaluation.m
+
+	- Run evaluation.m

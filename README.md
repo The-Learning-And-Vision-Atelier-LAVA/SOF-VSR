@@ -29,9 +29,9 @@ We use the Vid4 dataset and a subset of the DAVIS dataset (namely, DAVIS-10) for
 We use 10 scenes in the DAVIS-2017 test set including boxing, demolition, dive-in, dog-control, dolphins, kart-turn, ocean-birds, pole-vault, speed-skating and wings-trun.
 
 ## Train & Test
-[ACCV](./ACCV/README.md)
+[[ACCV]](./ACCV/README.md)
 
-[TIP](./TIP/README.md)
+[[TIP]](./TIP/README.md)
 
 ## Results
 ![Vid4](./Figs/results_Vid4.png)
