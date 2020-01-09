@@ -68,7 +68,7 @@ def main(cfg):
                                    flow_L1[i])
                 loss_L2 = OFR_loss(LR[:, i, :, :, :], LR[:, idx_center, :, :, :], flow_L2[i])
                 loss_L3 = OFR_loss(HR[:, i, :, :, :], HR[:, idx_center, :, :, :], flow_L3[i])
-                loss_OFR = loss_OFR + loss_L3 + 0.25 * loss_L2 + 0.125 * loss_L1
+                loss_OFR = loss_OFR + loss_L3 + 0.2 * loss_L2 + 0.1 * loss_L1
 
         loss = loss_SR + 0.01 * loss_OFR / (n_frames - 1)
         loss_list.append(loss.data.cpu())
