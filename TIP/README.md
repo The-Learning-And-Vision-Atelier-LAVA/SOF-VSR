@@ -29,6 +29,10 @@ python train.py --scale 4 --patch_size 32 --batch_size 32 --n_iters 200000 --gpu
 ## Test
 We provide the pretrained models (2x/3x/4x SR on BI degradation model and 4x SR on BD degradation model) for evaluation on the Vid4 dataset. 
 
+- Generate LR test images (Matlab)
+
+	- Run data/test/generate_LR_images.m
+	
 - Inference
 
 	- Run on CPU:

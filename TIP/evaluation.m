@@ -31,4 +31,5 @@ for idx_video = 1:length(video_name)
     ssim_vid4(idx_video) = mean(ssim_video);
     disp([video_name{idx_video},'---Mean PSNR: ', num2str(mean(psnr_video),'%0.4f'),', Mean SSIM: ', num2str(mean(ssim_video),'%0.4f')])
 end
+disp(['---------------------------------------------'])
 disp(['Vid4 ',degradation,'_x', num2str(scale) ,' SR---Mean PSNR: ', num2str(mean(psnr_vid4),'%0.4f'),', Mean SSIM: ', num2str(mean(ssim_vid4),'%0.4f')])
