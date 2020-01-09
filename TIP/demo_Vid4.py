@@ -63,54 +63,56 @@ def main(cfg):
     net.load_state_dict(ckpt)
     if cfg.gpu_mode:
         net.cuda()
+    
+    with torch.no_grad():
+        video_list = os.listdir(cfg.testset_dir)
+        
+        for idx_video in range(len(video_list)):
+            video_name = video_list[idx_video]
 
-    video_list = os.listdir(cfg.testset_dir)
-    for idx_video in range(len(video_list)):
-        video_name = video_list[idx_video]
+            # dataloader
+            test_set = TestsetLoader(cfg, video_name)
+            test_loader = DataLoader(test_set, num_workers=1, batch_size=1, shuffle=False)
 
-        # dataloader
-        test_set = TestsetLoader(cfg, video_name)
-        test_loader = DataLoader(test_set, num_workers=1, batch_size=1, shuffle=False)
+            for idx_iter, (LR_y_cube, SR_cb, SR_cr) in enumerate(test_loader):
+                # data
+                b, n_frames, h_lr, w_lr = LR_y_cube.size()
+                LR_y_cube = Variable(LR_y_cube)
+                LR_y_cube = LR_y_cube.view(b, -1, 1, h_lr, w_lr)
 
-        for idx_iter, (LR_y_cube, SR_cb, SR_cr) in enumerate(test_loader):
-            # data
-            b, n_frames, h_lr, w_lr = LR_y_cube.size()
-            LR_y_cube = Variable(LR_y_cube)
-            LR_y_cube = LR_y_cube.view(b, -1, 1, h_lr, w_lr)
+                if cfg.gpu_mode:
+                    LR_y_cube = LR_y_cube.cuda()
 
-            if cfg.gpu_mode:
-                LR_y_cube = LR_y_cube.cuda()
+                    if cfg.chop_forward:
+                        # crop borders to ensure each patch can be divisible by 2
+                        _, _, _, h, w = LR_y_cube.size()
+                        h = int(h//16) * 16
+                        w = int(w//16) * 16
+                        LR_y_cube = LR_y_cube[:, :, :, :h, :w]
+                        SR_cb = SR_cb[:, :h * cfg.scale, :w * cfg.scale]
+                        SR_cr = SR_cr[:, :h * cfg.scale, :w * cfg.scale]
+                        SR_y = chop_forward(LR_y_cube, net, cfg.scale).squeeze(0)
 
-                if cfg.chop_forward:
-                    # crop borders to ensure each patch can be divisible by 2
-                    _, _, _, h, w = LR_y_cube.size()
-                    h = int(h//16) * 16
-                    w = int(w//16) * 16
-                    LR_y_cube = LR_y_cube[:, :, :, :h, :w]
-                    SR_cb = SR_cb[:, :h * cfg.scale, :w * cfg.scale]
-                    SR_cr = SR_cr[:, :h * cfg.scale, :w * cfg.scale]
-                    SR_y = chop_forward(LR_y_cube, net, cfg.scale).squeeze(0)
+                    else:
+                        SR_y = net(LR_y_cube).squeeze(0)
 
                 else:
                     SR_y = net(LR_y_cube).squeeze(0)
 
-            else:
-                SR_y = net(LR_y_cube).squeeze(0)
+                SR_y = np.array(SR_y.data.cpu())
 
-            SR_y = np.array(SR_y.data.cpu())
+                SR_ycbcr = np.concatenate((SR_y, SR_cb, SR_cr), axis=0).transpose(1,2,0)
+                SR_rgb = ycbcr2rgb(SR_ycbcr) * 255.0
+                SR_rgb = np.clip(SR_rgb, 0, 255)
+                SR_rgb = ToPILImage()(np.round(SR_rgb).astype(np.uint8))
 
-            SR_ycbcr = np.concatenate((SR_y, SR_cb, SR_cr), axis=0).transpose(1,2,0)
-            SR_rgb = ycbcr2rgb(SR_ycbcr) * 255.0
-            SR_rgb = np.clip(SR_rgb, 0, 255)
-            SR_rgb = ToPILImage()(SR_rgb.astype(np.uint8))
-
-            if not os.path.exists('results/Vid4'):
-                os.mkdir('results/Vid4')
-            if not os.path.exists('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale)):
-                os.mkdir('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale))
-            if not os.path.exists('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name):
-                os.mkdir('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name)
-            SR_rgb.save('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name + '/sr_' + str(idx_iter+2).rjust(2,'0') + '.png')
+                if not os.path.exists('results/Vid4'):
+                    os.mkdir('results/Vid4')
+                if not os.path.exists('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale)):
+                    os.mkdir('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale))
+                if not os.path.exists('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name):
+                    os.mkdir('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name)
+                SR_rgb.save('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name + '/sr_' + str(idx_iter+2).rjust(2,'0') + '.png')
 
 
 if __name__ == '__main__':
