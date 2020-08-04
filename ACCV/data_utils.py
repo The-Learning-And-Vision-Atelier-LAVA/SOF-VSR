@@ -53,7 +53,7 @@ class TrainsetLoader(Dataset):
         HR = np.concatenate((HR0, HR1, HR2), axis=2)
         LR = np.concatenate((LR0, LR1, LR2), axis=2)
         # data augmentation
-        LR, HR = augumentation()(LR, HR)
+        LR, HR = augmentation()(LR, HR)
         return toTensor(LR), toTensor(HR)
     def __len__(self):
         return self.n_iters
@@ -101,7 +101,7 @@ class TestsetLoader(Dataset):
     def __len__(self):
         return self.frame_list.__len__() - 2
 
-class augumentation(object):
+class augmentation(object):
     def __call__(self, input, target):
         if random.random()<0.5:
             input = input[:, ::-1, :]
@@ -141,7 +141,6 @@ def random_crop(HR0, HR1, HR2, LR0, LR1, LR2, patch_size_lr, upscale_factor):
 
 def toTensor(img):
     img = torch.from_numpy(img.transpose((2, 0, 1)))
-    img.float().div(255)
     return img
 
 def rgb2ycbcr(img_rgb):
