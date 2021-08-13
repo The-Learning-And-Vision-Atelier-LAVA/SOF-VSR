@@ -50,8 +50,8 @@ def main(cfg):
 
         LR, HR = Variable(LR), Variable(HR)
         if cfg.gpu_mode:
-            LR = LR.cuda()
-            HR = HR.cuda()
+            LR = LR.cuda(device=cfg.gpu_num)
+            HR = HR.cuda(device=cfg.gpu_num)
         LR = LR.view(b, -1, 1, h_lr, w_lr)
         HR = HR.view(b, -1, 1, h_lr * cfg.scale, w_lr * cfg.scale)
 
@@ -60,7 +60,7 @@ def main(cfg):
 
         # loss
         loss_SR = criterion(SR, HR[:, idx_center, :, :, :])
-        loss_OFR = torch.zeros(1).cuda()
+        loss_OFR = torch.zeros(1).cuda(device=cfg.gpu_num)
 
         for i in range(n_frames):
             if i != idx_center:
