@@ -19,13 +19,14 @@ def parse_args():
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--n_iters', type=int, default=200000, help='number of iterations to train')
     parser.add_argument('--trainset_dir', type=str, default='data/train')
+    parser.add_argument('--gpu_num', type=int, default=3)
     return parser.parse_args()
 
 def main(cfg):
     # model
     net = SOFVSR(cfg, is_training=True)
     if cfg.gpu_mode:
-        net.cuda()
+        net.cuda(device=cfg.gpu_num)
     cudnn.benchmark = True
 
     # dataloader
@@ -79,7 +80,7 @@ def main(cfg):
         optimizer.step()
 
         # save checkpoint
-        if idx_iter % 5000 == 0:
+        if idx_iter % 10 == 0:
             print('Iteration---%6d,   loss---%f' % (idx_iter + 1, np.array(loss_list).mean()))
             save_path = 'log/' + cfg.degradation + '_x' + str(cfg.scale)
             save_name = cfg.degradation + '_x' + str(cfg.scale) + '_iter' + str(idx_iter) + '.pth'
