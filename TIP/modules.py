@@ -167,6 +167,7 @@ class ResB(nn.Module):
             nn.Conv2d(channels // 2, channels // 2, 1, 1, 0, bias=False),
             nn.LeakyReLU(0.1, inplace=True),
         )
+
     def forward(self, x):
         input = x[:, x.shape[1]//2:, :, :]
         out = torch.cat((x[:, :x.shape[1]//2, :, :], self.body(input)), 1)
@@ -180,6 +181,7 @@ class CasResB(nn.Module):
         for i in range(n_ResB):
             body.append(ResB(channels))
         self.body = nn.Sequential(*body)
+
     def forward(self, x):
         return self.body(x)
 

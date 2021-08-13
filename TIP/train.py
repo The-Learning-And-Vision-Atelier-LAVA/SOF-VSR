@@ -19,13 +19,14 @@ def parse_args():
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--n_iters', type=int, default=200000, help='number of iterations to train')
     parser.add_argument('--trainset_dir', type=str, default='data/train')
-    parser.add_argument('--gpu_num', type=int, default=3)
+    parser.add_argument('--gpu_num', type=int, default=2)
     return parser.parse_args()
 
 def main(cfg):
     # model
     net = SOFVSR(cfg, is_training=True)
     if cfg.gpu_mode:
+        print(cfg.gpu_num)
         net.cuda(device=cfg.gpu_num)
     cudnn.benchmark = True
 
