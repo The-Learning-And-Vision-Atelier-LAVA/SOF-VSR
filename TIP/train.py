@@ -16,18 +16,16 @@ def parse_args():
     parser.add_argument("--scale", type=int, default=4)
     parser.add_argument('--gpu_mode', type=bool, default=True)
     parser.add_argument('--patch_size', type=int, default=32)
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--n_iters', type=int, default=200000, help='number of iterations to train')
     parser.add_argument('--trainset_dir', type=str, default='data/train')
-    parser.add_argument('--gpu_num', type=int, default=2)
     return parser.parse_args()
 
 def main(cfg):
     # model
     net = SOFVSR(cfg, is_training=True)
     if cfg.gpu_mode:
-        print(cfg.gpu_num)
-        net.cuda(device=cfg.gpu_num)
+        net.cuda()
     cudnn.benchmark = True
 
     # dataloader
@@ -51,8 +49,8 @@ def main(cfg):
 
         LR, HR = Variable(LR), Variable(HR)
         if cfg.gpu_mode:
-            LR = LR.cuda(device=cfg.gpu_num)
-            HR = HR.cuda(device=cfg.gpu_num)
+            LR = LR.cuda()
+            HR = HR.cuda()
         LR = LR.view(b, -1, 1, h_lr, w_lr)
         HR = HR.view(b, -1, 1, h_lr * cfg.scale, w_lr * cfg.scale)
 
@@ -61,7 +59,7 @@ def main(cfg):
 
         # loss
         loss_SR = criterion(SR, HR[:, idx_center, :, :, :])
-        loss_OFR = torch.zeros(1).cuda(device=cfg.gpu_num)
+        loss_OFR = torch.zeros(1).cuda()
 
         for i in range(n_frames):
             if i != idx_center:
@@ -81,7 +79,7 @@ def main(cfg):
         optimizer.step()
 
         # save checkpoint
-        if idx_iter % 10 == 0:
+        if idx_iter % 500 == 0:
             print('Iteration---%6d,   loss---%f' % (idx_iter + 1, np.array(loss_list).mean()))
             save_path = 'log/' + cfg.degradation + '_x' + str(cfg.scale)
             save_name = cfg.degradation + '_x' + str(cfg.scale) + '_iter' + str(idx_iter) + '.pth'
@@ -93,6 +91,8 @@ def main(cfg):
 
 if __name__ == '__main__':
     cfg = parse_args()
+    torch.cuda.set_device(2)
+    print(torch.cuda.current_device())
     main(cfg)
 
 
