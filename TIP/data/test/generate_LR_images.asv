@@ -1,7 +1,7 @@
 clc
 clear
-cd 'C:/Users/USER/Desktop/SOF-VSR/TIP/data/test/'
-video_list = dir('Vid4');
+cd C:/Users/USER/Desktop/SOF-VSR/TIP/data/test/Vid4'
+video_list = dir('C:/Users/USER/Desktop/SOF-VSR/TIP/data/test/Vid4');
 %% BI
 for scale = 2:4
     for idx_video = 3:length(video_list)
