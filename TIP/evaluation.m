@@ -1,9 +1,10 @@
 clc
 clear
+cd("C:/Users/USER/Desktop/SOF-VSR/TIP")
 %% evaluation on Vid4
 addpath('metrics')
 video_name = {'calendar','city','foliage','walk'};
-scale = 2;
+scale = 4;
 degradation = 'BI';
 psnr_vid4 = [];
 ssim_vid4 = [];
