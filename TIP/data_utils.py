@@ -18,7 +18,8 @@ class TrainsetLoader(Dataset):
 
     def __getitem__(self, idx):
         idx_video = random.randint(0, len(self.video_list)-1)
-        idx_frame = random.randint(0, 28)                           # #frames of training videos is 31, 31-3=28
+        # idx_frame = random.randint(0, 28)                           # #frames of training videos is 31, 31-3=28
+        idx_frame = random.randint(0, 63) # TVD 맞춤
         lr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/lr_x' + str(self.scale) + '_' + self.degradation
         hr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/hr'
 
