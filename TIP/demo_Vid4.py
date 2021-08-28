@@ -11,10 +11,10 @@ import torch
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--degradation", type=str, default='BD')
+    parser.add_argument("--degradation", type=str, default='BI')
     parser.add_argument("--scale", type=int, default=4)
     parser.add_argument('--gpu_mode', type=bool, default=True)
-    parser.add_argument('--testset_dir', type=str, default='data/test/Vid4')
+    parser.add_argument('--testset_dir', type=str, default='data/test/TVD')
     parser.add_argument('--chop_forward', type=bool, default=False)
     return parser.parse_args()
 
@@ -115,6 +115,7 @@ def main(cfg):
                 # SR_rgb.save('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name + '/sr_' + str(idx_iter+2).rjust(2,'0') + '.png')
 
                 #TVD
+                print('come')
                 if not os.path.exists('results/TVD'):
                     os.mkdir('results/TVD')
                 if not os.path.exists('results/TVD/' + cfg.degradation + '_x' + str(cfg.scale)):
