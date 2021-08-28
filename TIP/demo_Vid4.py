@@ -106,13 +106,22 @@ def main(cfg):
                 SR_rgb = np.clip(SR_rgb, 0, 255)
                 SR_rgb = ToPILImage()(np.round(SR_rgb).astype(np.uint8))
 
-                if not os.path.exists('results/Vid4'):
-                    os.mkdir('results/Vid4')
-                if not os.path.exists('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale)):
-                    os.mkdir('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale))
-                if not os.path.exists('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name):
-                    os.mkdir('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name)
-                SR_rgb.save('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name + '/sr_' + str(idx_iter+2).rjust(2,'0') + '.png')
+                # if not os.path.exists('results/Vid4'):
+                #     os.mkdir('results/Vid4')
+                # if not os.path.exists('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale)):
+                #     os.mkdir('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale))
+                # if not os.path.exists('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name):
+                #     os.mkdir('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name)
+                # SR_rgb.save('results/Vid4/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name + '/sr_' + str(idx_iter+2).rjust(2,'0') + '.png')
+
+                #TVD
+                if not os.path.exists('results/TVD'):
+                    os.mkdir('results/TVD')
+                if not os.path.exists('results/TVD/' + cfg.degradation + '_x' + str(cfg.scale)):
+                    os.mkdir('results/TVD/' + cfg.degradation + '_x' + str(cfg.scale))
+                if not os.path.exists('results/TVD/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name):
+                    os.mkdir('results/TVD/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name)
+                SR_rgb.save('results/TVD/' + cfg.degradation + '_x' + str(cfg.scale) + '/' + video_name + '/sr_' + str(idx_iter+2).rjust(2,'0') + '.png')
 
 
 if __name__ == '__main__':
