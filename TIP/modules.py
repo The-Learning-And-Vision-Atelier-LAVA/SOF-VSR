@@ -215,9 +215,9 @@ def optical_flow_warp(image, image_optical_flow):
     if image_optical_flow.is_cuda == True:
         grid = grid.cuda()
 
-    # 아마 31장으로 실험해서 31인듯 tvd는 65로 바꾸고 해야할듯?
-    flow_0 = torch.unsqueeze(image_optical_flow[:, 0, :, :] * 31 / (w - 1), dim=1)
-    flow_1 = torch.unsqueeze(image_optical_flow[:, 1, :, :] * 31 / (h - 1), dim=1)
+    # 아마 31장으로 실험해서 31인듯 tvd는 65로 바꾸고 해야할듯? -> 31에서 65로 바꿔보았다.
+    flow_0 = torch.unsqueeze(image_optical_flow[:, 0, :, :] * 65 / (w - 1), dim=1)
+    flow_1 = torch.unsqueeze(image_optical_flow[:, 1, :, :] * 65 / (h - 1), dim=1)
     grid = grid + torch.cat((flow_0, flow_1),1)
     grid = grid.transpose(1, 2)
     grid = grid.transpose(3, 2)
