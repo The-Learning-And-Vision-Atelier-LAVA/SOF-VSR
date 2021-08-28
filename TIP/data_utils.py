@@ -19,7 +19,7 @@ class TrainsetLoader(Dataset):
     def __getitem__(self, idx):
         idx_video = random.randint(0, len(self.video_list)-1)
         # idx_frame = random.randint(0, 28)                           # #frames of training videos is 31, 31-3=28
-        idx_frame = random.randint(0, 63) # TVD 맞춤
+        idx_frame = random.randint(0, 62) # TVD 맞춤
         lr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/lr_x' + str(self.scale) + '_' + self.degradation
         hr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/hr'
 
@@ -133,6 +133,10 @@ class augmentation(object):
 
 
 def random_crop(HR0, HR1, HR2, LR0, LR1, LR2, patch_size_lr, scale):
+    """
+    HR과 LR이 서로 같은 부위를 각각 128x128, 32x32의 patch를 가지도록 한다.
+    결국 patch를 HR하는 것을 학습하는 것 같다.
+    """
     h_hr, w_hr = HR0.shape
     h_lr = h_hr // scale
     w_lr = w_hr // scale

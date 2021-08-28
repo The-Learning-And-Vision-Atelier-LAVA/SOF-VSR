@@ -106,6 +106,9 @@ class OFRnet(nn.Module):
         self.SR = nn.Sequential(*SR)
 
     def __call__(self, x):                  # x: b*2*h*w
+        """
+        cat 사용법이랑 unsqueeze를 어떻게, 왜하는건지 잘 모르겠다.
+        """
         #Part 1
         x_L1 = self.pool(x)
         b, c, h, w = x_L1.size()
@@ -196,6 +199,7 @@ def channel_shuffle(x, groups):
 
 def optical_flow_warp(image, image_optical_flow):
     """
+    여기는 이해 못하겠는데.. 너무 어렵다
     Arguments
         image_ref: reference images tensor, (b, c, h, w)
         image_optical_flow: optical flow to image_ref (b, 2, h, w)
@@ -211,6 +215,7 @@ def optical_flow_warp(image, image_optical_flow):
     if image_optical_flow.is_cuda == True:
         grid = grid.cuda()
 
+    # 아마 31장으로 실험해서 31인듯 tvd는 65로 바꾸고 해야할듯?
     flow_0 = torch.unsqueeze(image_optical_flow[:, 0, :, :] * 31 / (w - 1), dim=1)
     flow_1 = torch.unsqueeze(image_optical_flow[:, 1, :, :] * 31 / (h - 1), dim=1)
     grid = grid + torch.cat((flow_0, flow_1),1)

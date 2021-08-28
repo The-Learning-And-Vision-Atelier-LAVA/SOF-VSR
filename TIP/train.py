@@ -45,14 +45,14 @@ def main(cfg):
         scheduler.step()
 
         # data
-        b, n_frames, h_lr, w_lr = LR.size()
+        b, n_frames, h_lr, w_lr = LR.size() # 배치, frame수, 높이, 넓이 인듯
         idx_center = (n_frames - 1) // 2
 
         LR, HR = Variable(LR), Variable(HR)
         if cfg.gpu_mode:
             LR = LR.cuda()
             HR = HR.cuda()
-        LR = LR.view(b, -1, 1, h_lr, w_lr)
+        LR = LR.view(b, -1, 1, h_lr, w_lr) #이거는 왜 해주는걸까
         HR = HR.view(b, -1, 1, h_lr * cfg.scale, w_lr * cfg.scale)
 
         # inference
