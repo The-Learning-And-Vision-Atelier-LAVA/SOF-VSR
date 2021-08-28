@@ -89,7 +89,6 @@ def main(cfg):
             torch.save(net.state_dict(), save_path + '/' + save_name)
             loss_list = []
 
-
 if __name__ == '__main__':
     cfg = parse_args()
     torch.cuda.set_device(0)
