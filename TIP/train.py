@@ -80,7 +80,7 @@ def main(cfg):
         optimizer.step()
 
         # save checkpoint
-        if idx_iter % 500 == 0 or idx_iter == 199999:
+        if idx_iter % 1000 == 0 or idx_iter == 199999:
             print('Iteration---%6d,   loss---%f' % (idx_iter + 1, np.array(loss_list).mean()))
             save_path = 'log/TVD/' + cfg.degradation + '_x' + str(cfg.scale)
             save_name = cfg.degradation + '_x' + str(cfg.scale) + '_iter' + str(idx_iter) + '.pth'
