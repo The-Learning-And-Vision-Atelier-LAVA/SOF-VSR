@@ -17,6 +17,7 @@ class SOFVSR(nn.Module):
         b, n_frames, c, h, w = x.size()     # x: b*n*c*h*w
         idx_center = (n_frames - 1) // 2
 
+        # batch, input 갯수, channel, h, w = x.size()
         # motion estimation
         flow_L1 = []
         flow_L2 = []
@@ -24,7 +25,7 @@ class SOFVSR(nn.Module):
         input = []
 
         for idx_frame in range(n_frames):
-            if idx_frame != idx_center:
+            if idx_frame != idx_center: # t-1과 center frame, center frame과 t+1을 각각 input으로 만들어준다
                 input.append(torch.cat((x[:,idx_frame,:,:,:], x[:,idx_center,:,:,:]), 1))
         optical_flow_L1, optical_flow_L2, optical_flow_L3 = self.OFR(torch.cat(input, 0))
 
@@ -107,16 +108,17 @@ class OFRnet(nn.Module):
 
     def __call__(self, x):                  # x: b*2*h*w
         """
-        cat 사용법이랑 unsqueeze를 어떻게, 왜하는건지 잘 모르겠다.
+        Interpolate 결과 * 2 는 뭔지 모르겠다..
         """
         #Part 1
         x_L1 = self.pool(x)
-        b, c, h, w = x_L1.size()
-        input_L1 = torch.cat((x_L1, torch.zeros(b, 2, h, w).cuda()), 1)
+        b, c, h, w = x_L1.size() # input pair가 2개여서 2인 듯 하다.
+        input_L1 = torch.cat((x_L1, torch.zeros(b, 2, h, w).cuda()), 1) # x_L1이랑 차원 맞추려고 0으로 채운 optical flow랑 cat
         optical_flow_L1 = self.RNN2(self.RNN1(input_L1))
         optical_flow_L1_upscaled = F.interpolate(optical_flow_L1, scale_factor=2, mode='bilinear', align_corners=False) * 2
 
         #Part 2
+        # t-1 + center frame LR과 optical flow warp
         x_L2 = optical_flow_warp(torch.unsqueeze(x[:, 0, :, :], 1), optical_flow_L1_upscaled)
         input_L2 = torch.cat((x_L2, torch.unsqueeze(x[:, 1, :, :], 1), optical_flow_L1_upscaled), 1)
         optical_flow_L2 = self.RNN2(self.RNN1(input_L2)) + optical_flow_L1_upscaled
@@ -207,8 +209,8 @@ def optical_flow_warp(image, image_optical_flow):
     b, _ , h, w = image.size()
     grid = np.meshgrid(range(w), range(h))
     grid = np.stack(grid, axis=-1).astype(np.float64)
-    grid[:, :, 0] = grid[:, :, 0] * 2 / (w - 1) -1
-    grid[:, :, 1] = grid[:, :, 1] * 2 / (h - 1) -1
+    grid[:, :, 0] = grid[:, :, 0] * 2 / (w - 1) -1 #w축
+    grid[:, :, 1] = grid[:, :, 1] * 2 / (h - 1) -1 #h축
     grid = grid.transpose(2, 0, 1)
     grid = np.tile(grid, (b, 1, 1, 1))
     grid = Variable(torch.Tensor(grid))
@@ -216,8 +218,8 @@ def optical_flow_warp(image, image_optical_flow):
         grid = grid.cuda()
 
     # 아마 31장으로 실험해서 31인듯 tvd는 65로 바꾸고 해야할듯? -> 31에서 65로 바꿔보았다.
-    flow_0 = torch.unsqueeze(image_optical_flow[:, 0, :, :] * 65 / (w - 1), dim=1)
-    flow_1 = torch.unsqueeze(image_optical_flow[:, 1, :, :] * 65 / (h - 1), dim=1)
+    flow_0 = torch.unsqueeze(image_optical_flow[:, 0, :, :] * 31 / (w - 1), dim=1)
+    flow_1 = torch.unsqueeze(image_optical_flow[:, 1, :, :] * 31 / (h - 1), dim=1)
     grid = grid + torch.cat((flow_0, flow_1),1)
     grid = grid.transpose(1, 2)
     grid = grid.transpose(3, 2)
