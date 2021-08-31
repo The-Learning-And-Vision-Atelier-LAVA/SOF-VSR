@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument("--scale", type=int, default=4)
     parser.add_argument('--gpu_mode', type=bool, default=True)
     parser.add_argument('--patch_size', type=int, default=32)
-    parser.add_argument('--batch_size', type=int, default=16)
+    parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--n_iters', type=int, default=200000, help='number of iterations to train')
     parser.add_argument('--trainset_dir', type=str, default='data/train/TVD')
     return parser.parse_args()
@@ -91,6 +91,6 @@ def main(cfg):
 
 if __name__ == '__main__':
     cfg = parse_args()
-    torch.cuda.set_device(0)
+    torch.cuda.set_device(1)
     print(torch.cuda.current_device())
     main(cfg)

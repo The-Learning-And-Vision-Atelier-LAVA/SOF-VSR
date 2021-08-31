@@ -61,6 +61,8 @@ def main(cfg):
     net = SOFVSR(cfg, is_training=False)
     ckpt = torch.load('./log/' + cfg.degradation + '_x' + str(cfg.scale) + '.pth')
     net.load_state_dict(ckpt)
+    torch.cuda.set_device(2)
+    print(torch.cuda.current_device())
     if cfg.gpu_mode:
         net.cuda()
     
