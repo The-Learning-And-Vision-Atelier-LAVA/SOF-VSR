@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--n_iters', type=int, default=200000, help='number of iterations to train')
     parser.add_argument('--trainset_dir', type=str, default='data/train/TVD')
+    parser.add_argument('--version', type=str, default='SOF-VSR') # mSOF-VSR이 변화준 모델
     return parser.parse_args()
 
 
@@ -91,6 +92,6 @@ def main(cfg):
 
 if __name__ == '__main__':
     cfg = parse_args()
-    torch.cuda.set_device(1)
+    torch.cuda.set_device(0)
     print(torch.cuda.current_device())
     main(cfg)

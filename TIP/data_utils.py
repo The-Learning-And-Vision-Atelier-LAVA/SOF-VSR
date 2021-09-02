@@ -15,21 +15,44 @@ class TrainsetLoader(Dataset):
         self.n_iters = cfg.n_iters * cfg.batch_size
         self.video_list = os.listdir(cfg.trainset_dir)
         self.degradation = cfg.degradation
+        self.version = cfg.version
 
     def __getitem__(self, idx):
-        idx_video = random.randint(0, len(self.video_list)-1)
-        idx_frame = random.randint(0, 28)                           # #frames of training videos is 31, 31-3=28
-        # idx_frame = random.randint(0, 62) # TVD 맞춤
-        lr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/lr_x' + str(self.scale) + '_' + self.degradation
-        hr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/hr'
+        if self.version == 'SOF-VSR':
+            idx_video = random.randint(0, len(self.video_list)-1)
+            idx_frame = random.randint(0, 28)                           # #frames of training videos is 31, 31-3=28   test로 17장만 사용해본다.
+            # idx_frame = random.randint(0, 62) # TVD 맞춤
+            lr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/lr_x' + str(self.scale) + '_' + self.degradation
+            hr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/hr'
 
-        # read HR & LR frames
-        LR0 = Image.open(lr_dir + '/lr' + str(idx_frame) + '.png')
-        LR1 = Image.open(lr_dir + '/lr' + str(idx_frame + 1) + '.png')
-        LR2 = Image.open(lr_dir + '/lr' + str(idx_frame + 2) + '.png')
-        HR0 = Image.open(hr_dir + '/hr' + str(idx_frame) + '.png')
-        HR1 = Image.open(hr_dir + '/hr' + str(idx_frame + 1) + '.png')
-        HR2 = Image.open(hr_dir + '/hr' + str(idx_frame + 2) + '.png')
+            # read HR & LR frames
+            LR0 = Image.open(lr_dir + '/lr' + str(idx_frame) + '.png')
+            LR1 = Image.open(lr_dir + '/lr' + str(idx_frame + 1) + '.png')
+            LR2 = Image.open(lr_dir + '/lr' + str(idx_frame + 2) + '.png')
+            HR0 = Image.open(hr_dir + '/hr' + str(idx_frame) + '.png')
+            HR1 = Image.open(hr_dir + '/hr' + str(idx_frame + 1) + '.png')
+            HR2 = Image.open(hr_dir + '/hr' + str(idx_frame + 2) + '.png')
+
+
+
+        elif self.version == 'mSOF-VSR':
+            idx_video = random.randint(0, len(self.video_list) - 1)
+            idx_frame = random.randint(1, 15)  # 좌, 우측 I frame을 참조해서 중간 frame을 SR할거다. -> sr 수행할 frame idx
+            lr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/lr_x' + str(self.scale) + '_' + self.degradation
+            hr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/hr'
+
+            # left I frame, right I frame fix
+            left_I = 0
+            right_I = 16
+
+            # 중간 frame sr을 위해 양쪽 I frame을 참조한다.
+            LR0 = Image.open(lr_dir + '/lr' + str(left_I) + '.png')
+            LR1 = Image.open(lr_dir + '/lr' + str(idx_frame) + '.png')
+            LR2 = Image.open(lr_dir + '/lr' + str(right_I) + '.png')
+            HR0 = Image.open(hr_dir + '/hr' + str(left_I) + '.png')
+            HR1 = Image.open(hr_dir + '/hr' + str(idx_frame) + '.png')
+            HR2 = Image.open(hr_dir + '/hr' + str(right_I) + '.png')
+
 
         LR0 = np.array(LR0, dtype=np.float32) / 255.0
         LR1 = np.array(LR1, dtype=np.float32) / 255.0

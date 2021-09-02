@@ -109,6 +109,7 @@ class OFRnet(nn.Module):
     def __call__(self, x):                  # x: b*2*h*w
         """
         Interpolate 결과 * 2 는 뭔지 모르겠다..
+        frame을 여러개 넣거나, 구조를 바꾸거나, 가중치를 주거나.
         """
         #Part 1
         x_L1 = self.pool(x)
@@ -201,27 +202,25 @@ def channel_shuffle(x, groups):
 
 def optical_flow_warp(image, image_optical_flow):
     """
-    여기는 이해 못하겠는데.. 너무 어렵다
     Arguments
         image_ref: reference images tensor, (b, c, h, w)
         image_optical_flow: optical flow to image_ref (b, 2, h, w)
     """
     b, _ , h, w = image.size()
     grid = np.meshgrid(range(w), range(h))
-    grid = np.stack(grid, axis=-1).astype(np.float64)
+    grid = np.stack(grid, axis=-1).astype(np.float64) # 그냥 행으로 쌓았음
     grid[:, :, 0] = grid[:, :, 0] * 2 / (w - 1) -1 #w축
     grid[:, :, 1] = grid[:, :, 1] * 2 / (h - 1) -1 #h축
-    grid = grid.transpose(2, 0, 1)
-    grid = np.tile(grid, (b, 1, 1, 1))
+    grid = grid.transpose(2, 0, 1) # (32, 32, 2) -> (2, 32, 32)
+    grid = np.tile(grid, (b, 1, 1, 1)) # (2, 32, 32) -> (128, 2, 32, 32)
     grid = Variable(torch.Tensor(grid))
     if image_optical_flow.is_cuda == True:
         grid = grid.cuda()
 
-    # 아마 31장으로 실험해서 31인듯 tvd는 65로 바꾸고 해야할듯? -> 31에서 65로 바꿔보았다.
     flow_0 = torch.unsqueeze(image_optical_flow[:, 0, :, :] * 31 / (w - 1), dim=1)
     flow_1 = torch.unsqueeze(image_optical_flow[:, 1, :, :] * 31 / (h - 1), dim=1)
     grid = grid + torch.cat((flow_0, flow_1),1)
-    grid = grid.transpose(1, 2)
-    grid = grid.transpose(3, 2)
+    grid = grid.transpose(1, 2) # (128, 2, 32, 32) -> (128, 32, 2, 32)
+    grid = grid.transpose(3, 2) # (128, 32, 2, 32) -> (128, 32, 32, 2)
     output = F.grid_sample(image, grid, padding_mode='border')
     return output
