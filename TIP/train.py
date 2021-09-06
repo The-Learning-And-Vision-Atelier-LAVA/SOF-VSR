@@ -32,7 +32,7 @@ def main(cfg):
 
     # dataloader
     train_set = TrainsetLoader(cfg)
-    train_loader = DataLoader(train_set, num_workers=15, batch_size=cfg.batch_size, shuffle=True)
+    train_loader = DataLoader(train_set, num_workers=10, batch_size=cfg.batch_size, shuffle=True)
 
     # train
     optimizer = torch.optim.Adam(net.parameters(), lr=1e-3)
@@ -83,7 +83,10 @@ def main(cfg):
         # save checkpoint
         if idx_iter % 1000 == 0 or idx_iter == 199999:
             print('Iteration---%6d,   loss---%f' % (idx_iter + 1, np.array(loss_list).mean()))
-            save_path = 'log/TVD/' + cfg.degradation + '_x' + str(cfg.scale)
+            if cfg.version == 'mSOF-VSR':
+                save_path = 'log/mSOF-VSR/' + cfg.degradation + '_x' + str(cfg.scale)
+            else:
+                save_path = 'log/TVD/' + cfg.degradation + '_x' + str(cfg.scale)
             save_name = cfg.degradation + '_x' + str(cfg.scale) + '_iter' + str(idx_iter) + '.pth'
             if not os.path.exists(save_path):
                 os.mkdir(save_path)
