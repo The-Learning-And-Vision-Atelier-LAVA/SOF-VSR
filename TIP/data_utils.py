@@ -46,7 +46,6 @@ class TrainsetLoader(Dataset):
 
             # left I frame, right I frame fix
             n = idx_frame // 16  # I frame idx
-
             left_I = 0 + n * 16
             right_I = left_I + 16
 
