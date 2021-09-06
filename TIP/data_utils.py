@@ -20,7 +20,7 @@ class TrainsetLoader(Dataset):
     def __getitem__(self, idx):
         if self.version == 'SOF-VSR':
             idx_video = random.randint(0, len(self.video_list)-1)
-            idx_frame = random.randint(0, 28)                           # #frames of training videos is 31, 31-3=28   test로 17장만 사용해본다.
+            idx_frame = random.randint(0, 14)                           # #frames of training videos is 31, 31-3=28   test로 17장만 사용해본다.
             # idx_frame = random.randint(0, 62) # TVD 맞춤
             lr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/lr_x' + str(self.scale) + '_' + self.degradation
             hr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/hr'
@@ -98,12 +98,26 @@ class TestsetLoader(Dataset):
         self.degradation = cfg.degradation
         self.scale = cfg.scale
         self.frame_list = os.listdir(self.dataset_dir + '/lr_x' + str(self.scale) + '_' + self.degradation)
+        self.version = cfg.version
 
+    
     def __getitem__(self, idx):
+
         dir = self.dataset_dir + '/lr_x' + str(self.scale) + '_' + self.degradation
-        LR0 = Image.open(dir + '/' + 'lr_' + str(idx+1).rjust(2, '0') + '.png')
-        LR1 = Image.open(dir + '/' + 'lr_' + str(idx+2).rjust(2, '0') + '.png')
-        LR2 = Image.open(dir + '/' + 'lr_' + str(idx+3).rjust(2, '0') + '.png')
+
+        if self.version == 'SOF-VSR':
+            LR0 = Image.open(dir + '/' + 'lr' + str(idx+1).rjust(2, '0') + '.png')
+            LR1 = Image.open(dir + '/' + 'lr' + str(idx+2).rjust(2, '0') + '.png')
+            LR2 = Image.open(dir + '/' + 'lr' + str(idx+3).rjust(2, '0') + '.png')
+        
+        elif self.version == 'mSOF-VSR':
+            print(idx)
+            left_I = 0
+            right_I = 16
+            LR0 = Image.open(dir + '/' + 'lr' + str(left_I) + '.png')
+            LR1 = Image.open(dir + '/' + 'lr' + str(idx+2) + '.png')
+            LR2 = Image.open(dir + '/' + 'lr' + str(right_I) + '.png')
+
         W, H = LR1.size
 
         # H and W should be divisible by 2
