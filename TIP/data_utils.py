@@ -112,9 +112,9 @@ class TestsetLoader(Dataset):
         dir = self.dataset_dir + '/lr_x' + str(self.scale) + '_' + self.degradation
 
         if self.version == 'SOF-VSR':
-            LR0 = Image.open(dir + '/' + 'lr' + str(idx + 1).rjust(2, '0') + '.png')
-            LR1 = Image.open(dir + '/' + 'lr' + str(idx + 2).rjust(2, '0') + '.png')
-            LR2 = Image.open(dir + '/' + 'lr' + str(idx + 3).rjust(2, '0') + '.png')
+            LR0 = Image.open(dir + '/' + 'lr' + str(idx) + '.png')
+            LR1 = Image.open(dir + '/' + 'lr' + str(idx+1) + '.png')
+            LR2 = Image.open(dir + '/' + 'lr' + str(idx+2) + '.png')
 
         elif self.version == 'mSOF-VSR':
             print(idx)
