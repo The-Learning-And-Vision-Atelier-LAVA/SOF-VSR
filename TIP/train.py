@@ -18,8 +18,8 @@ def parse_args():
     parser.add_argument('--patch_size', type=int, default=32)
     parser.add_argument('--batch_size', type=int, default=256)
     parser.add_argument('--n_iters', type=int, default=53000, help='number of iterations to train')
-    parser.add_argument('--trainset_dir', type=str, default='data/train/TVD_HEVC_frame')
-    parser.add_argument('--version', type=str, default='SOF-VSR') # mSOF-VSR이 변화준 모델
+    parser.add_argument('--trainset_dir', type=str, default='data/train')
+    parser.add_argument('--version', type=str, default='sof') # mSOF-VSR이 변화준 모델
     return parser.parse_args()
 
 
@@ -83,10 +83,10 @@ def main(cfg):
         # save checkpoint
         if idx_iter % 1000 == 0 or idx_iter == 199999:
             print('Iteration---%6d,   loss---%f' % (idx_iter + 1, np.array(loss_list).mean()))
-            if cfg.version == 'mSOF-VSR':
-                save_path = 'log/TVD/mSOF/' + cfg.degradation + '_x' + str(cfg.scale)
+            if cfg.version == 'msof':
+                save_path = 'log/msof/' + cfg.degradation + '_x' + str(cfg.scale)
             else:
-                save_path = 'log/TVD/SOF/' + cfg.degradation + '_x' + str(cfg.scale)
+                save_path = 'log/sof/' + cfg.degradation + '_x' + str(cfg.scale)
             save_name = cfg.degradation + '_x' + str(cfg.scale) + '_iter' + str(idx_iter) + '.pth'
             if not os.path.exists(save_path):
                 os.mkdir(save_path)

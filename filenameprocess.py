@@ -1,34 +1,28 @@
 import os
 import shutil
 
-pth = 'TIP/data/train/TVD_HEVC_frame'
+pth = 'D:/TVD/TVD_960/hevc/frame'
 
 directory = os.listdir(pth)
 
 print(directory)
 
+for i in directory:  # hr 바꾸기
 
-for i in directory: #hr 바꾸기
-
-    subdir = os.listdir(pth+'/'+i)
+    subdir = os.listdir(pth + '/' + i)
     print(subdir)
-    lrdir = os.listdir(pth+'/'+i+'/'+subdir[0])
-    print(pth+'/'+i+'/'+subdir[0])
+    lrdir = os.listdir(pth + '/' + i + '/' + subdir[1])
+    print(pth + '/' + i + '/' + subdir[1])
     print(lrdir)
 
-    for j in range(len(lrdir)): # hr directory
+    for j in range(len(lrdir)):  # hr directory
         origname = lrdir[j][:-4]
 
-        fname = origname
-        fname = fname[-5:]
+        fname = origname[3:]
+        print(fname)
 
-        if fname[0] == '_':
-            fname = fname[4]
-            print(fname)
-
-        else:
-            fname = fname[3:]
-            print(fname)
-
-        os.rename(pth+'/'+i+'/'+subdir[0]+'/'+origname+'.png', pth+'/'+i+'/'+subdir[0]+'/'+'hr'+str(int(fname)-1)+'.png')
-        print(pth+'/'+i+'/'+subdir[0]+'/'+origname+'.png'+' -> ' + pth+'/'+i+'/'+subdir[0]+'/'+'hr'+str(int(fname)-1)+'.png')
+        if fname == origname[3:]:
+            os.rename(pth + '/' + i + '/' + subdir[1] + '/' + origname + '.png',
+                      pth + '/' + i + '/' + subdir[1] + '/' + 'hr' + str(fname) + '.png')
+            print(pth + '/' + i + '/' + subdir[1] + '/' + origname + '.png' + ' -> ' + pth + '/' + i + '/' + subdir[
+                1] + '/' + 'hr' + str(fname) + '.png')

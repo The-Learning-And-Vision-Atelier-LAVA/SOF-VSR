@@ -19,10 +19,11 @@ class TrainsetLoader(Dataset):
         self.version = cfg.version
 
     def __getitem__(self, idx):
-        if self.version == 'SOF-VSR':
+        if self.version == 'sof':
             idx_video = random.randint(0, len(self.video_list) - 1)
-            #idx_frame = random.randint(0, 14)  # #frames of training videos is 31, 31-3=28   test로 17장만 사용해본다.
-            idx_frame = random.randint(0, 62) # TVD 맞춤
+            # idx_frame = random.randint(0, 14)  # #frames of training videos is 31, 31-3=28   test로 17장만 사용해본다.
+            # idx_frame = random.randint(0, 62) # TVD 맞춤
+            idx_frame = random.randint(0, 14)  # lr0~lr16만 참고한다.
             lr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/lr_x' + str(
                 self.scale) + '_' + self.degradation
             hr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/hr'
@@ -37,29 +38,55 @@ class TrainsetLoader(Dataset):
 
 
 
-        elif self.version == 'mSOF-VSR':
+        elif self.version == 'msof':
             idx_video = random.randint(0, len(self.video_list) - 1)
-            idx_frame = random.randint(1, 63)  # 좌, 우측 I frame을 참조해서 중간 frame을 SR할거다. -> sr 수행할 frame idx
+            # idx_frame = random.randint(1, 63)  # 좌, 우측 I frame을 참조해서 중간 frame을 SR할거다. -> sr 수행할 frame idx
+            idx_frame = random.randint(1, 15)
             lr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/lr_x' + str(
                 self.scale) + '_' + self.degradation
             hr_dir = self.trainset_dir + '/' + self.video_list[idx_video] + '/hr'
+
+            left_frame = 0
+            right_frame = 0
 
             # left I frame, right I frame fix
             n = idx_frame // 16  # I frame idx
             left_I = 0 + n * 16
             right_I = left_I + 16
 
+            p = (idx_frame // 5) + 1  # 0이면 0~4는 5를 참고
+            p_frame = 0 + p * 5  # 현재 idx에서 우측 p frame을 가리킴
+
+            # 현재 frame이 I, P, B 구분
             if idx_frame % 16 == 0:  # if cur frame is I frame
                 left_I = idx_frame - 16
                 right_I = idx_frame + 16
 
+            elif idx_frame % 5 == 0:  # if cur frame is P frame
+                left_frame = idx_frame - 5  # I든 P든 참조한다.
+
+                if (idx_frame + 1) % 16 == 0:
+                    right_frame = right_I
+
+                else:
+                    right_frame = idx_frame + 5
+
+            else:  # if cur frame is neither I frame nor P frame -> B
+                if idx_frame // 5 == 0:
+                    left_frame = left_I
+                    right_frame = p_frame
+
+                elif idx_frame // 5 == 1 or idx_frame // 5 == 2:
+                    left_frame = p_frame - 5
+                    right_frame = p_frame
+
             # 중간 frame sr을 위해 양쪽 I frame을 참조한다.
-            LR0 = Image.open(lr_dir + '/lr' + str(left_I) + '.png')
+            LR0 = Image.open(lr_dir + '/lr' + str(left_frame) + '.png')
             LR1 = Image.open(lr_dir + '/lr' + str(idx_frame) + '.png')
-            LR2 = Image.open(lr_dir + '/lr' + str(right_I) + '.png')
-            HR0 = Image.open(hr_dir + '/hr' + str(left_I) + '.png')
+            LR2 = Image.open(lr_dir + '/lr' + str(right_frame) + '.png')
+            HR0 = Image.open(hr_dir + '/hr' + str(left_frame) + '.png')
             HR1 = Image.open(hr_dir + '/hr' + str(idx_frame) + '.png')
-            HR2 = Image.open(hr_dir + '/hr' + str(right_I) + '.png')
+            HR2 = Image.open(hr_dir + '/hr' + str(right_frame) + '.png')
 
         LR0 = np.array(LR0, dtype=np.float32) / 255.0
         LR1 = np.array(LR1, dtype=np.float32) / 255.0
@@ -111,12 +138,12 @@ class TestsetLoader(Dataset):
 
         dir = self.dataset_dir + '/lr_x' + str(self.scale) + '_' + self.degradation
 
-        if self.version == 'SOF-VSR':
+        if self.version == 'sof':
             LR0 = Image.open(dir + '/' + 'lr' + str(idx) + '.png')
-            LR1 = Image.open(dir + '/' + 'lr' + str(idx+1) + '.png')
-            LR2 = Image.open(dir + '/' + 'lr' + str(idx+2) + '.png')
+            LR1 = Image.open(dir + '/' + 'lr' + str(idx + 1) + '.png')
+            LR2 = Image.open(dir + '/' + 'lr' + str(idx + 2) + '.png')
 
-        elif self.version == 'mSOF-VSR':
+        elif self.version == 'msof':
             print(idx)
             left_I = 0
             right_I = 16
@@ -158,7 +185,8 @@ class TestsetLoader(Dataset):
         return LR, SR_cb, SR_cr
 
     def __len__(self):
-        return len(self.frame_list) - 2
+        #return len(self.frame_list) - 2
+        return 15
 
 
 class augmentation(object):
@@ -222,7 +250,7 @@ def ycbcr2rgb(img_ycbcr):
     ## the range of img_ycbcr should be (0, 1)
     img_r = 1.164 * (img_ycbcr[:, :, 0] - 16 / 255.0) + 1.596 * (img_ycbcr[:, :, 2] - 128 / 255.0)
     img_g = 1.164 * (img_ycbcr[:, :, 0] - 16 / 255.0) - 0.392 * (img_ycbcr[:, :, 1] - 128 / 255.0) - 0.813 * (
-                img_ycbcr[:, :, 2] - 128 / 255.0)
+            img_ycbcr[:, :, 2] - 128 / 255.0)
     img_b = 1.164 * (img_ycbcr[:, :, 0] - 16 / 255.0) + 2.017 * (img_ycbcr[:, :, 1] - 128 / 255.0)
     img_r = img_r[:, :, np.newaxis]
     img_g = img_g[:, :, np.newaxis]
